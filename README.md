@@ -1,36 +1,30 @@
 
-# Welcome to your CDK Python project!
+# Containerised Locust load generation in CDK
 
-This is a blank project for Python development with CDK.
+This is an example of how to build a distributed Locust swarm in ECS (on ec2 Spot) using CDK in python.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the .env
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+## Structure
 
-To manually create a virtualenv on MacOS and Linux:
+app.py is the entry point. In here you can set:
+ - Deployment region
+ - Whether Locust is distributed or standalone
+ - The target url
 
-```
-$ python3 -m venv .env
-```
+cdklocust/cdklocust_stack.py defines the VPC and ECS cluster. In here you can adjust:
+ - VPC config
+ - ECS cluster specs (cluster size, instance type, spot bid)
+ - Number of locust slaves 
+ - CloudMap namespace (I've used loadgen, but you could use an existing namespace and/or route53 domain)
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+cdklocust/locust_container (yes, I could have named that better) is a CDK construct class that defines the task and service properties to run Locust in ECS 
+
+## Useful commands summarised from the CDK app build
+There's a virtualenv created, so activate it using 
 
 ```
 $ source .env/bin/activate
 ```
-
-If you are a Windows platform, you would activate the virtualenv like this:
-
-```
-% .env\Scripts\activate.bat
-```
-
 Once the virtualenv is activated, you can install the required dependencies.
 
 ```
@@ -43,16 +37,3 @@ At this point you can now synthesize the CloudFormation template for this code.
 $ cdk synth
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
