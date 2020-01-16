@@ -98,4 +98,5 @@ class locustContainer(core.Construct):
                 port=80,
                 targets=[locust_service]
             )
+
     
