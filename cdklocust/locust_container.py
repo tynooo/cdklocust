@@ -30,7 +30,7 @@ class locustContainer(core.Construct):
                 environment={"TARGET_URL": target_url,
                     "LOCUST_MODE": role,
                     #Need to update to pull the name from Cloudmap
-                    "LOCUST_MASTER": "master.loadgen"
+                    "LOCUST_MASTER_HOST": "master.loadgen"
                 }
             )
         else:
