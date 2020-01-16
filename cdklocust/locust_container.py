@@ -79,7 +79,7 @@ class locustContainer(core.Construct):
                 ec2.Port.tcp(5558)
             )
         
-        # Create the master service
+        # Create the ecs service
         locust_service = ecs.Ec2Service(
             self, name +"service",
             cluster = ecs_cluster,
@@ -93,7 +93,6 @@ class locustContainer(core.Construct):
         # Create the ALB to present the Locust UI
         lb = elbv2.ApplicationLoadBalancer(self, "LB", vpc=vpc, internet_facing=True)
         listener = lb.add_listener("Listener", port=80)
-        # removed: target_group1 = 
         listener.add_targets("ECS1",
             port=80,
             targets=[locust_service]
