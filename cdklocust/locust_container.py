@@ -90,11 +90,12 @@ class locustContainer(core.Construct):
         
         locust_service.enable_cloud_map(name=role)
         
-        # Create the ALB to present the Locust UI
-        lb = elbv2.ApplicationLoadBalancer(self, "LB", vpc=vpc, internet_facing=True)
-        listener = lb.add_listener("Listener", port=80)
-        listener.add_targets("ECS1",
-            port=80,
-            targets=[locust_service]
-        )
+        # Create the ALB to present the Locust UI 
+        if role != "slave":
+            lb = elbv2.ApplicationLoadBalancer(self, "LB", vpc=vpc, internet_facing=True)
+            listener = lb.add_listener("Listener", port=80)
+            listener.add_targets("ECS1",
+                port=80,
+                targets=[locust_service]
+            )
     
