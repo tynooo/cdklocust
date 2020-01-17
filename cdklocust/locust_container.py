@@ -98,5 +98,10 @@ class locustContainer(core.Construct):
                 port=80,
                 targets=[locust_service]
             )
+            core.CfnOutput(
+                self, "lburl",
+                description = "URL for ALB fronting locust master",
+                value = lb.load_balancer_dns_name
+                )
 
     
