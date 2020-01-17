@@ -49,6 +49,7 @@ class CdklocustStack(core.Stack):
             locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url)
         else:
             role = "master"
-            locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url)
+            master_construct = locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url)
             role = "slave"
-            locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url, number_of_slaves)
+            slave_construct = locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url, number_of_slaves)
+            slave_construct.node.add_dependency(master_construct)
