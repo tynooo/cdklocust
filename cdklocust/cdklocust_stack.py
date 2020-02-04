@@ -3,7 +3,8 @@ from aws_cdk import (
     aws_ec2 as ec2,
     aws_ecs as ecs,
     aws_elasticloadbalancingv2 as elbv2,
-    aws_iam as iam
+    aws_iam as iam,
+    aws_cloudwatch as cw
     )
 from cdklocust.locust_container import locustContainer
 
@@ -44,12 +45,33 @@ class CdklocustStack(core.Stack):
         #cloudmap for service discovery so slaves can lookup mast via dns
         loadgen_cluster.add_default_cloud_map_namespace(name="loadgen")
         
+        #Create a graph widget to track reservation metrics for our cluster
+        ecs_widget = cw.GraphWidget(
+            left = [loadgen_cluster.metric_cpu_reservation()], 
+            right = [ loadgen_cluster.metric_memory_reservation()],
+            title = "ECS - CPU and Memory Reservation",
+            )
+        
+        #CloudWatch dashboard to monitor our stuff
+        dashboard = cw.Dashboard(self, "Locustdashboard")
+        dashboard.add_widgets(ecs_widget)
+        
         if not distributed_locust:
             role = "standalone"
             locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url)
         else:
             role = "master"
             master_construct = locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url)
+            
+            lb_widget = cw.GraphWidget(
+                left = [master_construct.lb.metric_active_connection_count(), master_construct.lb.metric_target_response_time()],
+                right = [master_construct.lb.metric_request_count()],
+                title = "Load Balancer")
+                
+            dashboard.add_widgets(lb_widget)
+            
             role = "slave"
             slave_construct = locustContainer(self, "locust" + role, vpc, loadgen_cluster, role, target_url, number_of_slaves)
             slave_construct.node.add_dependency(master_construct)
+            
+

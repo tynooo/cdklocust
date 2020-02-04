@@ -84,8 +84,8 @@ class locustContainer(core.Construct):
         
         # Create the ALB to present the Locust UI 
         if role != "slave":
-            lb = elbv2.ApplicationLoadBalancer(self, "LB", vpc=vpc, internet_facing=True)
-            listener = lb.add_listener("Listener", port=80)
+            self.lb = elbv2.ApplicationLoadBalancer(self, "LoustLB", vpc=vpc, internet_facing=True)
+            listener = self.lb.add_listener("Listener", port=80)
             listener.add_targets("ECS1",
                 port=80,
                 targets=[locust_service]
@@ -93,7 +93,5 @@ class locustContainer(core.Construct):
             core.CfnOutput(
                 self, "lburl",
                 description = "URL for ALB fronting locust master",
-                value = lb.load_balancer_dns_name
+                value = self.lb.load_balancer_dns_name
                 )
-
-    
