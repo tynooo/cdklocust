@@ -19,34 +19,26 @@ class locustContainer(core.Construct):
         )
         
         if role == "slave":
-            locust_container = task_def.add_container(
-                name + "container",
-                # Use Locust image from DockerHub
-                # Or not. we'll use an image we create using the dockerfile in ./locust
-                image=ecs.ContainerImage.from_asset("locust"),
-                memory_reservation_mib=512,
-                essential=True,
-                logging=ecs.LogDrivers.aws_logs(stream_prefix=name),
-                environment={"TARGET_URL": target_url,
-                    "LOCUST_MODE": role,
-                    #Need to update to pull the name from Cloudmap
-                    "LOCUST_MASTER_HOST": "master.loadgen"
-                }
-            )
+            container_env={"TARGET_URL": target_url,
+                "LOCUST_MODE": role,
+                #Need to update to pull the name from Cloudmap
+                "LOCUST_MASTER_HOST": "master.loadgen"
+            }
         else:
-            locust_container = task_def.add_container(
-                name + "container",
-                # Use Locust image from DockerHub
-                # Or not. we'll use an image we create using the dockerfile in ./locust
-                image=ecs.ContainerImage.from_asset("locust"),
-                memory_reservation_mib=512,
-                essential=True,
-                logging=ecs.LogDrivers.aws_logs(stream_prefix=name),
-                environment={"TARGET_URL": target_url,
-                    "LOCUST_MODE": role
-                }
-            )
+            container_env={"TARGET_URL": target_url,
+                "LOCUST_MODE": role 
+            }
             
+        locust_container = task_def.add_container(
+            name + "container",
+            # Use Locust image from DockerHub
+            # Or not. we'll use an image we create using the dockerfile in ./locust
+            image=ecs.ContainerImage.from_asset("locust"),
+            memory_reservation_mib=512,
+            essential=True,
+            logging=ecs.LogDrivers.aws_logs(stream_prefix=name),
+            environment=container_env
+        )
         
         
         web_port_mapping = ecs.PortMapping(container_port=8089)
