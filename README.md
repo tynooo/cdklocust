@@ -19,25 +19,20 @@ cdklocust/cdklocust_stack.py defines the VPC and ECS cluster. In here you can ad
 
 cdklocust/locust_container (yes, I could have named that better) is a CDK construct class that defines the task and service properties to run Locust in ECS 
 
-locust/Dockerfile is the dockerfile that is used to generate the Locust image. This one just adds locustfile.py to the image.
+locust/Dockerfile is the dockerfile that is used to generate the Locust image. This one just grabs the latest Locust.io image and adds locustfile.py to it.
 
 locust/locustfile.py defines the locust configuration. Check out the docs for more info https://docs.locust.io/en/stable/writing-a-locustfile.html
 
-## Useful commands summarised from the CDK app build
-There's a virtualenv created, so activate it using 
+## Getting it running
+
+Assuming you have Python3 and CDK installed
+
+Clone this repo and get your environment ready
 
 ```
-$ source .env/bin/activate
-```
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
+python3 -m venv .env
+source .env/bin/activate
+pip install -r requirements.txt
 ```
 
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
+Then run ```cdk deploy``` to deploy to your account. 
