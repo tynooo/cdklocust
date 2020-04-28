@@ -36,3 +36,5 @@ pip install -r requirements.txt
 ```
 
 Then run ```cdk deploy``` to deploy to your account. 
+
+When you're done run ```cdk destroy``` to tear it down.
