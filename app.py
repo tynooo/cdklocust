@@ -2,6 +2,7 @@
 import os
 from aws_cdk import core
 
+from cdklocust.cdklocustinfra_stack import CdkLocustInfraStack
 from cdklocust.cdklocust_stack import CdklocustStack
 
 
@@ -19,6 +20,11 @@ REGION = app.node.try_get_context('region') or os.environ.get(
 
 AWS_ENV = core.Environment(region=REGION, account=ACCOUNT)
 
-CdklocustStack(app, "cdklocust", env=AWS_ENV)
+infra_stack = CdkLocustInfraStack(app, "cdkinfra", env=AWS_ENV)
+
+locust_stack = CdklocustStack(app, "cdklocust",
+                              env=AWS_ENV,
+                              vpc=infra_stack.vpc
+                             )
 
 app.synth()

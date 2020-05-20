@@ -11,22 +11,11 @@ from cdklocust.locust_container import locustContainer
 
 class CdklocustStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+    def __init__(self, scope: core.Construct, id: str, vpc, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         self.get_cdk_context()
-
-
-        #Build new VPC
-        self.vpc = ec2.Vpc(
-            self, "loadgenvpc",
-            cidr=self.vpc_cidr,
-            subnet_configuration=[
-                {"cidrMask": 24, "name": "ecsvpc", "subnetType": ec2.SubnetType.PUBLIC},
-                {"cidrMask": 24, "name": "ecsprivatevpc", "subnetType": ec2.SubnetType.PRIVATE}
-            ]
-        )
-
+        self.vpc=vpc
 
         #ECS cluster for the loadgen
         self.loadgen_cluster = ecs.Cluster(

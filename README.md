@@ -17,7 +17,9 @@ Most of the parameters are set via the app context in cdk.json:
  - Whether Locust is distributed or standalone
  - The target url
 
-cdklocust/cdklocust_stack.py defines the VPC and ECS cluster.
+cdklocust/cdklocustinfra_stack.py defines the VPC, and can be used to define other resources that exist outside the Locust services. 
+
+cdklocust/cdklocust_stack.py defines the ECS cluster and invokes the locust_container construct to build the services themselves..
 
 cdklocust/locust_container (yes, I could have named that better) is a CDK construct class that defines the task and service properties to run Locust in ECS 
 
@@ -40,6 +42,6 @@ npm -g upgrade
 
 
 
-Then run ```cdk deploy``` to deploy to your account. 
+Then run ```cdk deploy cdklocust``` to deploy to your account, if the cdklocustinfra stack isn't up already, it'll create that too. 
 
-When you're done run ```cdk destroy``` to tear it down.
+When you're done run ```cdk destroy cdkinfra``` to tear it all down, or ```cdk destroy cdklocust``` to only destroy the ECS cluster, services, and ALB.
