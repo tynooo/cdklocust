@@ -12,21 +12,19 @@ class locustContainer(core.Construct):
         super().__init__(scope, id, **kwargs)
 
         name = id
-
+        step = True
 
         task_def = ecs.Ec2TaskDefinition(self, name,
                                          network_mode=ecs.NetworkMode.AWS_VPC
                                         )
 
+        container_env = {"TARGET_URL": target_url,
+                         "LOCUST_MODE": role
+                        }
         if role == "slave":
-            container_env = {"TARGET_URL": target_url,
-                             "LOCUST_MODE": role,
-                             "LOCUST_MASTER_HOST": "master.loadgen"
-                            }
-        else:
-            container_env = {"TARGET_URL": target_url,
-                             "LOCUST_MODE": role
-                            }
+            container_env["LOCUST_MASTER_HOST"] = "master.loadgen"
+        if step:
+            container_env["LOCUST_OPTS"] = "--step-load"
 
         locust_container = task_def.add_container(
             name + "container",
@@ -51,7 +49,7 @@ class locustContainer(core.Construct):
             locust_container.add_port_mappings(web_port_mapping)
 
 
-        security_group = ec2.SecurityGroup(
+        security_group=ec2.SecurityGroup(
             self, "Locust",
             vpc=vpc,
             allow_all_outbound=True

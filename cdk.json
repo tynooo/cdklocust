@@ -1,3 +1,12 @@
 {
-  "app": "python3 app.py"
+  "app": "python3 app.py",
+  "context": {
+    "region": "ap-southeast-2",
+    "vpc_cidr": "10.51.0.0/16",
+    "number_of_workers": "1",
+    "ecs_instance_type": "c5.large",
+    "distributed_locust": "True",
+    "target_url": "http://localhost/",
+    "cloudmap_namespace": "loadgen"
+  }
 }
