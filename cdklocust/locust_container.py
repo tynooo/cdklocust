@@ -36,6 +36,13 @@ class locustContainer(core.Construct):
             environment=container_env
         )
 
+        locust_container.add_ulimits(
+            ecs.Ulimit(
+                name=ecs.UlimitName.NOFILE,
+                soft_limit=65536,
+                hard_limit=65536
+            )
+        )
 
         web_port_mapping = ecs.PortMapping(container_port=8089)
         if role != "standalone":
