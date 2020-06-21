@@ -93,13 +93,15 @@ class locustContainer(core.Construct):
             self.lb = elbv2.ApplicationLoadBalancer(self, "LoustLB", vpc=vpc,
                                                     internet_facing=True
                                                    )
+            # Forward port 80 to port 8089
             listener = self.lb.add_listener("Listener", port=80)
             listener.add_targets("ECS1",
-                                 port=80,
+                                 port=8089,
+                                 protocol=elbv2.ApplicationProtocol.HTTP,
                                  targets=[locust_service]
-                                )
+                                 )
             core.CfnOutput(
                 self, "lburl",
                 description="URL for ALB fronting locust master",
-                value=self.lb.load_balancer_dns_name
-                )
+                value="http://{}".format(self.lb.load_balancer_dns_name)
+            )
