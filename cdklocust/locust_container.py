@@ -17,12 +17,13 @@ class locustContainer(core.Construct):
         task_def = ecs.Ec2TaskDefinition(self, name,
                                          network_mode=ecs.NetworkMode.AWS_VPC
                                         )
-
-        container_env = {"TARGET_URL": target_url,
-                         "LOCUST_MODE": role
-                        }
+        container_env = {}
+        container_env["TARGET_URL"] = target_url
         if role == "slave":
-            container_env["LOCUST_MASTER_HOST"] = "master.loadgen"
+            container_env["LOCUST_MASTER_NODE_HOST"] = "master.loadgen"
+            container_env["LOCUST_MODE_WORKER"] = "True"
+        elif role == "master":
+            container_env["LOCUST_MODE_MASTER"] = "True"
         if step:
             container_env["LOCUST_OPTS"] = "--step-load"
 
