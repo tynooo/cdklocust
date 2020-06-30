@@ -1,8 +1,5 @@
+FROM locustio/locust:1.0.3
 
-FROM locustio/locust:0.14.6
-
-ADD locustfile.py locustfile.py
-
-
-
-
+WORKDIR /home/locust
+COPY . .
+RUN pip install -r requirements.txt

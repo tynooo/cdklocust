@@ -17,12 +17,13 @@ class locustContainer(core.Construct):
         task_def = ecs.Ec2TaskDefinition(self, name,
                                          network_mode=ecs.NetworkMode.AWS_VPC
                                         )
-
-        container_env = {"TARGET_URL": target_url,
-                         "LOCUST_MODE": role
-                        }
+        container_env = {}
+        container_env["TARGET_URL"] = target_url
         if role == "slave":
-            container_env["LOCUST_MASTER_HOST"] = "master.loadgen"
+            container_env["LOCUST_MASTER_NODE_HOST"] = "master.loadgen"
+            container_env["LOCUST_MODE_WORKER"] = "True"
+        elif role == "master":
+            container_env["LOCUST_MODE_MASTER"] = "True"
         if step:
             container_env["LOCUST_OPTS"] = "--step-load"
 
@@ -36,6 +37,13 @@ class locustContainer(core.Construct):
             environment=container_env
         )
 
+        locust_container.add_ulimits(
+            ecs.Ulimit(
+                name=ecs.UlimitName.NOFILE,
+                soft_limit=65536,
+                hard_limit=65536
+            )
+        )
 
         web_port_mapping = ecs.PortMapping(container_port=8089)
         if role != "standalone":
@@ -86,13 +94,15 @@ class locustContainer(core.Construct):
             self.lb = elbv2.ApplicationLoadBalancer(self, "LoustLB", vpc=vpc,
                                                     internet_facing=True
                                                    )
+            # Forward port 80 to port 8089
             listener = self.lb.add_listener("Listener", port=80)
             listener.add_targets("ECS1",
-                                 port=80,
+                                 port=8089,
+                                 protocol=elbv2.ApplicationProtocol.HTTP,
                                  targets=[locust_service]
-                                )
+                                 )
             core.CfnOutput(
                 self, "lburl",
                 description="URL for ALB fronting locust master",
-                value=self.lb.load_balancer_dns_name
-                )
+                value="http://{}".format(self.lb.load_balancer_dns_name)
+            )
