@@ -37,7 +37,7 @@ class CdklocustStack(core.Stack):
                                           spot_price="0.07",
                                           spot_instance_draining=True
                                          )
-        #cloudmap for service discovery so slaves can lookup mast via dns
+        #cloudmap for service discovery so workers can lookup mast via dns
         self.loadgen_cluster.add_default_cloud_map_namespace(name = self.cloudmap_namespace)
 
         #Create a graph widget to track reservation metrics for our cluster
@@ -67,7 +67,7 @@ class CdklocustStack(core.Stack):
 
             self.dashboard.add_widgets(lb_widget)
 
-            role = "slave"
+            role = "worker"
             worker_construct = locustContainer(self, "locust" + role, self.vpc,
                                                self.loadgen_cluster, role, self.target_url,
                                                self.number_of_workers)

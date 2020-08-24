@@ -19,7 +19,7 @@ class locustContainer(core.Construct):
                                         )
         container_env = {}
         container_env["TARGET_URL"] = target_url
-        if role == "slave":
+        if role == "worker":
             container_env["LOCUST_MASTER_NODE_HOST"] = "master.loadgen"
             container_env["LOCUST_MODE_WORKER"] = "True"
         elif role == "master":
@@ -47,17 +47,17 @@ class locustContainer(core.Construct):
 
         web_port_mapping = ecs.PortMapping(container_port=8089)
         if role != "standalone":
-            slave1_port_mapping = ecs.PortMapping(container_port=5557)
-            slave2_port_mapping = ecs.PortMapping(container_port=5558)
+            worker1_port_mapping = ecs.PortMapping(container_port=5557)
+            worker2_port_mapping = ecs.PortMapping(container_port=5558)
             locust_container.add_port_mappings(web_port_mapping,
-                                               slave1_port_mapping,
-                                               slave2_port_mapping
+                                               worker1_port_mapping,
+                                               worker2_port_mapping
                                               )
         else:
             locust_container.add_port_mappings(web_port_mapping)
 
 
-        security_group=ec2.SecurityGroup(
+        security_group = ec2.SecurityGroup(
             self, "Locust",
             vpc=vpc,
             allow_all_outbound=True
@@ -90,7 +90,7 @@ class locustContainer(core.Construct):
         locust_service.enable_cloud_map(name=role)
 
         # Create the ALB to present the Locust UI
-        if role != "slave":
+        if role != "worker":
             self.lb = elbv2.ApplicationLoadBalancer(self, "LoustLB", vpc=vpc,
                                                     internet_facing=True
                                                    )
@@ -100,7 +100,7 @@ class locustContainer(core.Construct):
                                  port=8089,
                                  protocol=elbv2.ApplicationProtocol.HTTP,
                                  targets=[locust_service]
-                                 )
+                                )
             core.CfnOutput(
                 self, "lburl",
                 description="URL for ALB fronting locust master",

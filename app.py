@@ -7,8 +7,8 @@ from cdklocust.cdklocust_stack import CdklocustStack
 
 
 '''
-If you need to change things like vpc cidr, number of slave containers,
-or instance type do that in the class def
+If you need to change things like vpc cidr, number of worker containers,
+or instance type do that in cdk.json
 '''
 
 app = core.App()
