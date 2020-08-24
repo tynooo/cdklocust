@@ -1,4 +1,4 @@
-FROM locustio/locust:1.0.3
+FROM locustio/locust:1.2.2
 
 WORKDIR /home/locust
 COPY . .
