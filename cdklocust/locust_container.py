@@ -25,7 +25,7 @@ class locustContainer(core.Construct):
         elif role == "master":
             container_env["LOCUST_MODE_MASTER"] = "True"
         if step:
-            container_env["LOCUST_OPTS"] = "--step-load"
+            container_env["LOCUST_STEP_LOAD"] = "True"
 
         locust_container = task_def.add_container(
             name + "container",
