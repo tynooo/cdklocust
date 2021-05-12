@@ -25,7 +25,8 @@ cdklocust/locust_container (yes, I could have named that better) is a CDK constr
 
 locust/Dockerfile is the dockerfile that is used to generate the Locust image. This one just grabs the Locust.io image and adds locustfile.py to it.
 
-locust/locustfile.py defines the locust configuration. Check out the docs for more info https://docs.locust.io/en/stable/writing-a-locustfile.html
+locust/locustfile.py defines the locust configuration. Check out the docs for more info https://docs.locust.io/en/stable/writing-a-locustfile.html 
+If you need to generate a shaped load test, instructions for adding it to your locustfile are here https://docs.locust.io/en/1.5.1/generating-custom-load-shape.html
 
 ## Getting it running
 
