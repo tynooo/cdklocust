@@ -12,8 +12,6 @@ class locustContainer(core.Construct):
         super().__init__(scope, id, **kwargs)
 
         name = id
-        step = True
-
         task_def = ecs.Ec2TaskDefinition(self, name,
                                          network_mode=ecs.NetworkMode.AWS_VPC
                                         )
@@ -24,8 +22,6 @@ class locustContainer(core.Construct):
             container_env["LOCUST_MODE_WORKER"] = "True"
         elif role == "master":
             container_env["LOCUST_MODE_MASTER"] = "True"
-        if step:
-            container_env["LOCUST_STEP_LOAD"] = "True"
 
         locust_container = task_def.add_container(
             name + "container",
