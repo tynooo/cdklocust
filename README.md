@@ -1,7 +1,7 @@
 
 # Containerised Locust load generation in CDK
 
-This is an example of how to build a distributed Locust swarm in ECS (on ec2 Spot) using CDK in python.
+This is an example of how to build a distributed Locust swarm in ECS (on ec2 Spot) using CDK V1 in python.
 
 
 ## Structure
